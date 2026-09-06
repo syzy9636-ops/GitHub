@@ -359,3 +359,29 @@ footer { font-size: 11px; }
   .menu-panel-top, .menu-panel-bottom { font-size: 10px; }
   .menu-item-copy small { font-size: 9px; }
 }
+
+/* Revised hero copy. */
+.hero-title-wrap { padding-bottom: 17px; }
+.hero-title-wrap h1.hero-title { font-size: clamp(54px, 7.4vw, 118px); letter-spacing: -.075em; }
+.hero-taglines { display: grid; justify-items: center; gap: 6px; }
+.hero-taglines .hero-title-note { color: rgba(40,91,90,.82); font: italic 600 12px/1.4 'Noto Serif SC', serif; letter-spacing: .08em; }
+
+/* The portrait now follows the pointer with a restrained foreground/background offset. */
+.portrait-wrap, .portrait-frame img { will-change: transform; }
+.portrait-frame img { transform: scale(1.045); }
+
+/* Give the two-line skills headline a clearer vertical rhythm. */
+.strengths-head h2 { line-height: 1.2; }
+.strengths-head h2 em { display: inline-block; margin-top: .13em; }
+
+@media (max-width: 680px) {
+  .hero-title-wrap h1.hero-title { font-size: clamp(42px, 12vw, 64px); letter-spacing: -.06em; }
+  .hero-taglines { gap: 4px; }
+  .hero-taglines .hero-title-note { font-size: 10px; letter-spacing: .045em; }
+  .strengths-head h2 { line-height: 1.16; }
+  .strengths-head h2 em { margin-top: .16em; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .portrait-wrap, .portrait-frame img { will-change: auto; }
+}

@@ -1,0 +1,126 @@
+diff --git a/src/main.jsx b/src/main.jsx
+index f919f65..2817455 100644
+--- a/src/main.jsx
++++ b/src/main.jsx
+@@ -338,6 +338,9 @@ function App() {
+       const heroPaper = hero.querySelector('.hero-paper')
+       const heroChars = hero.querySelectorAll('.hero-paper .fold-char')
+       const heroOpening = hero.querySelector('.hero-opening')
++      const aboutSection = root.querySelector('.about')
++      const aboutPortrait = aboutSection?.querySelector('.portrait-wrap')
++      const aboutPortraitImage = aboutPortrait?.querySelector('.portrait-frame img')
+       const intro = gsap.timeline({
+         defaults: { ease: 'expo.out' },
+         onStart: () => root.classList.add('gsap-playing'),
+@@ -386,9 +389,43 @@ function App() {
+       hero.addEventListener('pointermove', handlePointerMove)
+       hero.addEventListener('pointerleave', resetParallax)
+ 
++      let handlePortraitPointerMove = null
++      let resetPortraitParallax = null
++      if (aboutSection && aboutPortrait && aboutPortraitImage) {
++        const portraitX = gsap.quickTo(aboutPortrait, 'x', { duration: 0.85, ease: 'power3.out' })
++        const portraitY = gsap.quickTo(aboutPortrait, 'y', { duration: 0.85, ease: 'power3.out' })
++        const imageX = gsap.quickTo(aboutPortraitImage, 'x', { duration: 1.05, ease: 'power3.out' })
++        const imageY = gsap.quickTo(aboutPortraitImage, 'y', { duration: 1.05, ease: 'power3.out' })
++
++        handlePortraitPointerMove = (event) => {
++          if (event.pointerType === 'touch') return
++          const rect = aboutSection.getBoundingClientRect()
++          const x = (event.clientX - rect.left) / rect.width - 0.5
++          const y = (event.clientY - rect.top) / rect.height - 0.5
++          portraitX(x * 34)
++          portraitY(y * 24)
++          imageX(x * -18)
++          imageY(y * -14)
++        }
++
++        resetPortraitParallax = () => {
++          portraitX(0)
++          portraitY(0)
++          imageX(0)
++          imageY(0)
++        }
++
++        aboutSection.addEventListener('pointermove', handlePortraitPointerMove)
++        aboutSection.addEventListener('pointerleave', resetPortraitParallax)
++      }
++
+       removePointerHandlers = () => {
+         hero.removeEventListener('pointermove', handlePointerMove)
+         hero.removeEventListener('pointerleave', resetParallax)
++        if (aboutSection && handlePortraitPointerMove && resetPortraitParallax) {
++          aboutSection.removeEventListener('pointermove', handlePortraitPointerMove)
++          aboutSection.removeEventListener('pointerleave', resetPortraitParallax)
++        }
+       }
+ 
+       root.querySelectorAll('.section:not(.hero)').forEach((section) => {
+@@ -559,9 +596,12 @@ function App() {
+           <div className="hero-paper">
+             <div className="paper-topline"><span>游戏宣发</span><span>Unity / AE / Blender / PS</span><span>01 / 05</span></div>
+             <div className="hero-title-wrap">
+-              <span className="title-kicker">PV / MV / Unity 视效制作</span>
+-              <h1><FoldText text="视效" /><em><FoldText text="合成" /></em></h1>
+-              <p>场景、灯光、特效与后期，服务于每一支游戏宣传片。</p>
++              <span className="title-kicker">PV / MV / Unity 视效合成</span>
++              <h1 className="hero-title"><FoldText text="次元壁" /><em><FoldText text="维修工" /></em></h1>
++              <div className="hero-taglines">
++                <p>场景、灯光、特效与后期，服务于每一支游戏宣传片。</p>
++                <p className="hero-title-note">图层叠出艺术感，绿幕抠出安全感</p>
++              </div>
+             </div>
+             <div className="paper-bottomline"><span>王恩涛 / 游戏视效设计师</span></div>
+           </div>
+@@ -617,7 +657,7 @@ function App() {
+         <GradientWaves />
+         <div className="shell">
+           <SectionLabel number="02 / 精选作品" note="近期参与制作的代表项目" english="SELECTED WORKS"><FoldText text="作品选集" /></SectionLabel>
+-          <div className="projects-intro"><div><span className="copy-kicker">SELECTED VISUALS</span><h2><FoldText text="让镜头有情绪，" /><br /><em><FoldText text="让画面有回声。" /></em></h2></div><p>从角色印象曲、联动版本 PV 到完整的视觉包装，记录参与制作的公开项目。</p></div>
++          <div className="projects-intro"><div><span className="copy-kicker">SELECTED VISUALS</span><h2><FoldText text="合成两小时" /><br /><em><FoldText text="渲染一整夜" /></em></h2></div><p>从角色印象曲、联动版本 PV 到完整的视觉包装，记录参与制作的公开项目。</p></div>
+           <div className="project-list">
+             {projects.map((project) => (
+               <BorderGlow key={project.number}>
+@@ -659,7 +699,7 @@ function App() {
+         <div className="contact-rings" />
+         <div className="shell contact-inner">
+           <SectionLabel number="05 / 联系方式" note="欢迎一起制作有记忆点的作品" english="CONTACT"><FoldText text="联系我" /></SectionLabel>
+-          <div className="contact-main"><span className="contact-kicker"><Sparkles size={14} /> 欢迎 PV / MV / 视效项目合作</span><h2><FoldText text="一起做点" /><br /><em><FoldText text="有记忆的事。" /></em></h2><a className="email-link" href="mailto:wangentao9636@foxmail.com">wangentao9636@foxmail.com <ArrowUpRight size={22} /></a><a className="phone-link" href="tel:15554527386">电话：155 5452 7386</a></div>
++          <div className="contact-main"><span className="contact-kicker"><Sparkles size={14} /> 欢迎 PV / MV / 视效项目合作</span><h2><FoldText text="来，" /><br /><em><FoldText text="连个节点？" /></em></h2><a className="email-link" href="mailto:wangentao9636@foxmail.com">wangentao9636@foxmail.com <ArrowUpRight size={22} /></a><a className="phone-link" href="tel:15554527386">电话：155 5452 7386</a></div>
+           <footer><span>© 2025 王恩涛</span><span>山东 / 中国</span><div className="footer-links"><a href="#top">微信：W15554527386</a><a href="#top">QQ：2505690778</a></div></footer>
+         </div>
+       </section>
+diff --git a/src/styles.css b/src/styles.css
+index 93069ce..cb5aaa1 100644
+--- a/src/styles.css
++++ b/src/styles.css
+@@ -359,3 +359,29 @@ footer { font-size: 11px; }
+   .menu-panel-top, .menu-panel-bottom { font-size: 10px; }
+   .menu-item-copy small { font-size: 9px; }
+ }
++
++/* Revised hero copy. */
++.hero-title-wrap { padding-bottom: 17px; }
++.hero-title-wrap h1.hero-title { font-size: clamp(54px, 7.4vw, 118px); letter-spacing: -.075em; }
++.hero-taglines { display: grid; justify-items: center; gap: 6px; }
++.hero-taglines .hero-title-note { color: rgba(40,91,90,.82); font: italic 600 12px/1.4 'Noto Serif SC', serif; letter-spacing: .08em; }
++
++/* The portrait now follows the pointer with a restrained foreground/background offset. */
++.portrait-wrap, .portrait-frame img { will-change: transform; }
++.portrait-frame img { transform: scale(1.045); }
++
++/* Give the two-line skills headline a clearer vertical rhythm. */
++.strengths-head h2 { line-height: 1.2; }
++.strengths-head h2 em { display: inline-block; margin-top: .13em; }
++
++@media (max-width: 680px) {
++  .hero-title-wrap h1.hero-title { font-size: clamp(42px, 12vw, 64px); letter-spacing: -.06em; }
++  .hero-taglines { gap: 4px; }
++  .hero-taglines .hero-title-note { font-size: 10px; letter-spacing: .045em; }
++  .strengths-head h2 { line-height: 1.16; }
++  .strengths-head h2 em { margin-top: .16em; }
++}
++
++@media (prefers-reduced-motion: reduce) {
++  .portrait-wrap, .portrait-frame img { will-change: auto; }
++}

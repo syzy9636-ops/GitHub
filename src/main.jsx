@@ -338,6 +338,9 @@ function App() {
       const heroPaper = hero.querySelector('.hero-paper')
       const heroChars = hero.querySelectorAll('.hero-paper .fold-char')
       const heroOpening = hero.querySelector('.hero-opening')
+      const aboutSection = root.querySelector('.about')
+      const aboutPortrait = aboutSection?.querySelector('.portrait-wrap')
+      const aboutPortraitImage = aboutPortrait?.querySelector('.portrait-frame img')
       const intro = gsap.timeline({
         defaults: { ease: 'expo.out' },
         onStart: () => root.classList.add('gsap-playing'),
@@ -385,9 +388,44 @@ function App() {
 
       hero.addEventListener('pointermove', handlePointerMove)
       hero.addEventListener('pointerleave', resetParallax)
+
+      let handlePortraitPointerMove = null
+      let resetPortraitParallax = null
+      if (aboutSection && aboutPortrait && aboutPortraitImage) {
+        const portraitX = gsap.quickTo(aboutPortrait, 'x', { duration: 0.85, ease: 'power3.out' })
+        const portraitY = gsap.quickTo(aboutPortrait, 'y', { duration: 0.85, ease: 'power3.out' })
+        const imageX = gsap.quickTo(aboutPortraitImage, 'x', { duration: 1.05, ease: 'power3.out' })
+        const imageY = gsap.quickTo(aboutPortraitImage, 'y', { duration: 1.05, ease: 'power3.out' })
+
+        handlePortraitPointerMove = (event) => {
+          if (event.pointerType === 'touch') return
+          const rect = aboutSection.getBoundingClientRect()
+          const x = (event.clientX - rect.left) / rect.width - 0.5
+          const y = (event.clientY - rect.top) / rect.height - 0.5
+          portraitX(x * 34)
+          portraitY(y * 24)
+          imageX(x * -18)
+          imageY(y * -14)
+        }
+
+        resetPortraitParallax = () => {
+          portraitX(0)
+          portraitY(0)
+          imageX(0)
+          imageY(0)
+        }
+
+        aboutSection.addEventListener('pointermove', handlePortraitPointerMove)
+        aboutSection.addEventListener('pointerleave', resetPortraitParallax)
+      }
+
       removePointerHandlers = () => {
         hero.removeEventListener('pointermove', handlePointerMove)
         hero.removeEventListener('pointerleave', resetParallax)
+        if (aboutSection && handlePortraitPointerMove && resetPortraitParallax) {
+          aboutSection.removeEventListener('pointermove', handlePortraitPointerMove)
+          aboutSection.removeEventListener('pointerleave', resetPortraitParallax)
+        }
       }
 
       root.querySelectorAll('.section:not(.hero)').forEach((section) => {
@@ -558,9 +596,12 @@ function App() {
           <div className="hero-paper">
             <div className="paper-topline"><span>游戏宣发</span><span>Unity / AE / Blender / PS</span><span>01 / 05</span></div>
             <div className="hero-title-wrap">
-              <span className="title-kicker">PV / MV / Unity 视效制作</span>
-              <h1><FoldText text="视效" /><em><FoldText text="合成" /></em></h1>
-              <p>场景、灯光、特效与后期，服务于每一支游戏宣传片。</p>
+              <span className="title-kicker">PV / MV / Unity 视效合成</span>
+              <h1 className="hero-title"><FoldText text="次元壁" /><em><FoldText text="维修工" /></em></h1>
+              <div className="hero-taglines">
+                <p>场景、灯光、特效与后期，服务于每一支游戏宣传片。</p>
+                <p className="hero-title-note">图层叠出艺术感，绿幕抠出安全感</p>
+              </div>
             </div>
             <div className="paper-bottomline"><span>王恩涛 / 游戏视效设计师</span></div>
           </div>
@@ -616,7 +657,7 @@ function App() {
         <GradientWaves />
         <div className="shell">
           <SectionLabel number="02 / 精选作品" note="近期参与制作的代表项目" english="SELECTED WORKS"><FoldText text="作品选集" /></SectionLabel>
-          <div className="projects-intro"><div><span className="copy-kicker">SELECTED VISUALS</span><h2><FoldText text="让镜头有情绪，" /><br /><em><FoldText text="让画面有回声。" /></em></h2></div><p>从角色印象曲、联动版本 PV 到完整的视觉包装，记录参与制作的公开项目。</p></div>
+          <div className="projects-intro"><div><span className="copy-kicker">SELECTED VISUALS</span><h2><FoldText text="合成两小时" /><br /><em><FoldText text="渲染一整夜" /></em></h2></div><p>从角色印象曲、联动版本 PV 到完整的视觉包装，记录参与制作的公开项目。</p></div>
           <div className="project-list">
             {projects.map((project) => (
               <BorderGlow key={project.number}>
@@ -658,7 +699,7 @@ function App() {
         <div className="contact-rings" />
         <div className="shell contact-inner">
           <SectionLabel number="05 / 联系方式" note="欢迎一起制作有记忆点的作品" english="CONTACT"><FoldText text="联系我" /></SectionLabel>
-          <div className="contact-main"><span className="contact-kicker"><Sparkles size={14} /> 欢迎 PV / MV / 视效项目合作</span><h2><FoldText text="一起做点" /><br /><em><FoldText text="有记忆的事。" /></em></h2><a className="email-link" href="mailto:wangentao9636@foxmail.com">wangentao9636@foxmail.com <ArrowUpRight size={22} /></a><a className="phone-link" href="tel:15554527386">电话：155 5452 7386</a></div>
+          <div className="contact-main"><span className="contact-kicker"><Sparkles size={14} /> 欢迎 PV / MV / 视效项目合作</span><h2><FoldText text="来，" /><br /><em><FoldText text="连个节点？" /></em></h2><a className="email-link" href="mailto:wangentao9636@foxmail.com">wangentao9636@foxmail.com <ArrowUpRight size={22} /></a><a className="phone-link" href="tel:15554527386">电话：155 5452 7386</a></div>
           <footer><span>© 2025 王恩涛</span><span>山东 / 中国</span><div className="footer-links"><a href="#top">微信：W15554527386</a><a href="#top">QQ：2505690778</a></div></footer>
         </div>
       </section>
