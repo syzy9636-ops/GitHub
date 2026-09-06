@@ -279,19 +279,31 @@ function App() {
   const [heroVideoIndex, setHeroVideoIndex] = useState(0)
   const [menuOpen, setMenuOpen] = useState(false)
   const rootRef = useRef(null)
+  const pendingNavigationRef = useRef(null)
   const heroVideoBvid = heroVideoBvids[heroVideoIndex]
   const scrollTo = (id) => {
-    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-    // Menu jumps can happen while remote covers and fonts are still settling.
-    // Refresh twice so ScrollTrigger uses the final section positions.
+    pendingNavigationRef.current = id
+    const alignTarget = () => {
+      const target = document.getElementById(id)
+      if (!target) return
+      const top = Math.max(0, target.getBoundingClientRect().top + window.scrollY)
+      window.scrollTo({ top, behavior: 'auto' })
+    }
+
+    alignTarget()
+    // Let the jump start before refreshing trigger measurements. Font and image
+    // layout changes can otherwise leave a long navigation short of its target.
     window.setTimeout(() => {
       ScrollTrigger.refresh()
       ScrollTrigger.update()
-    }, 120)
+      alignTarget()
+    }, 420)
     window.setTimeout(() => {
       ScrollTrigger.refresh()
       ScrollTrigger.update()
-    }, 1200)
+      alignTarget()
+      if (pendingNavigationRef.current === id) pendingNavigationRef.current = null
+    }, 1800)
   }
   const navigateFromMenu = (id) => {
     setMenuOpen(false)
@@ -454,7 +466,15 @@ function App() {
         window.clearTimeout(refreshTimeout)
         refreshTimeout = window.setTimeout(() => {
           refreshTimeout = 0
-          if (!disposed) ScrollTrigger.refresh()
+          if (!disposed) {
+            ScrollTrigger.refresh()
+            const pendingId = pendingNavigationRef.current
+            const pendingTarget = pendingId && document.getElementById(pendingId)
+            if (pendingTarget) {
+              const top = Math.max(0, pendingTarget.getBoundingClientRect().top + window.scrollY)
+              window.scrollTo({ top, behavior: 'auto' })
+            }
+          }
         }, 160)
       }
       window.addEventListener('load', refreshAfterAssetLoad, { passive: true })
